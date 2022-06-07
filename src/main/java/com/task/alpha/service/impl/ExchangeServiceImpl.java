@@ -1,6 +1,7 @@
 package com.task.alpha.service.impl;
 
 import com.task.alpha.clients.ExchangeFeignClient;
+import com.task.alpha.exception.IncorrectCodeException;
 import com.task.alpha.model.Currency;
 import com.task.alpha.model.Gif;
 import com.task.alpha.service.ExchangeService;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import java.net.URI;
 import java.time.LocalDate;
+import java.util.Optional;
 
 @Component
 public class ExchangeServiceImpl implements ExchangeService {
@@ -45,7 +47,8 @@ public class ExchangeServiceImpl implements ExchangeService {
     @Override
     public double getTodayCurrencyRateByCode(String code) {
         Currency currency = exchangeFeignClient.getLatest();
-        return currency.getRates().get(code);
+        return Optional.ofNullable(currency.getRates().get(code))
+                .orElseThrow(() -> new IncorrectCodeException(code));
     }
 
     @Override
@@ -53,6 +56,7 @@ public class ExchangeServiceImpl implements ExchangeService {
         LocalDate yesterday = LocalDate.now().minusDays(1);
         URI baseUrl = URI.create(url + "/historical/" + yesterday + ".json?app_id=" + appId);
         Currency currency = exchangeFeignClient.getYesterday(baseUrl);
-        return currency.getRates().get(code);
+        return Optional.ofNullable(currency.getRates().get(code))
+                .orElseThrow(() -> new IncorrectCodeException(code));
     }
 }
