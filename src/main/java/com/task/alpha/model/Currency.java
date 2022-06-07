@@ -14,25 +14,8 @@ import java.util.Map;
 @Setter
 public class Currency {
 
-    @JsonProperty("disclaimer")
-    private String disclaimer;
-    @JsonProperty("license")
-    private String license;
-    @JsonProperty("timestamp")
-    private int timestamp;
     @JsonProperty("base")
     private String base;
     @JsonProperty("rates")
     private Map<String, Double> rates = new HashMap<>();
-
-    @Override
-    public String toString() {
-        return "Currency{" +
-                "disclaimer='" + disclaimer + '\'' +
-                ", license='" + license + '\'' +
-                ", timestamp=" + timestamp +
-                ", base='" + base + '\'' +
-                ", rates=" + rates +
-                '}';
-    }
 }

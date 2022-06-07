@@ -1,26 +1,23 @@
 package com.task.alpha.service.impl;
 
 import com.task.alpha.clients.ExchangeFeignClient;
-import com.task.alpha.clients.GifFeignClient;
+import com.task.alpha.exception.IncorrectCodeException;
 import com.task.alpha.model.Currency;
-import com.task.alpha.model.GifWrapper;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
+import java.net.URI;
+import java.time.LocalDate;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
 class ExchangeServiceImplTest {
-
-    Currency currency;
 
     @MockBean
     ExchangeFeignClient feignClient;
@@ -28,36 +25,37 @@ class ExchangeServiceImplTest {
     @Autowired
     ExchangeServiceImpl service;
 
-    @BeforeEach
-    void init() {
-        currency = new Currency();
-        currency.getRates().put("RUB", 1.0);
-    }
-
-    @Test
-    void compareDayRatesByCode() {
-        when(feignClient.getYesterday(any())).thenReturn(currency);
-        double rate = service.getYesterdayCurrencyRateByCode("RUB");
-
-        currency.getRates().put("RUB", 1.22);
-
-        when(feignClient.getLatest()).thenReturn(currency);
-        double rate1 = service.getTodayCurrencyRateByCode("RUB");
-
-        assertTrue(rate < rate1);
-    }
-
     @Test
     void getTodayCurrencyRateByCode() {
+        Currency currency = new Currency();
+        currency.getRates().put("RUB", 74.80);
+        String code = "RUB";
+
         when(feignClient.getLatest()).thenReturn(currency);
-        double rate = service.getTodayCurrencyRateByCode("RUB");
-        assertEquals(1.0, rate);
+        double currencyRate = service.getTodayCurrencyRateByCode(code);
+
+        assertEquals(currency.getRates().get(code), currencyRate);
+
+        String incorrectCode = "CODE";
+
+        assertThrows(IncorrectCodeException.class, () -> service.getTodayCurrencyRateByCode(incorrectCode));
     }
 
     @Test
     void getYesterdayCurrencyRateByCode() {
-        when(feignClient.getYesterday(any())).thenReturn(currency);
-        double rate = service.getYesterdayCurrencyRateByCode("RUB");
-        assertEquals(1.0, rate);
+        Currency currency = new Currency();
+        currency.getRates().put("RUB", 74.80);
+        String code = "RUB";
+        URI baseUrl = URI.create("https://openexchangerates.org/api" + "/historical/" + LocalDate.now().minusDays(1) + ".json?app_id=" + "79d35d7560cc4bf5a1b89c89599b7fbe");
+
+        when(feignClient.getYesterday(baseUrl)).thenReturn(currency);
+        double currencyRate = service.getYesterdayCurrencyRateByCode(code);
+
+        verify(feignClient).getYesterday(baseUrl);
+        assertEquals(currency.getRates().get(code), currencyRate);
+
+        String incorrectCode = "CODE";
+
+        assertThrows(IncorrectCodeException.class, () -> service.getYesterdayCurrencyRateByCode(incorrectCode));
     }
 }
