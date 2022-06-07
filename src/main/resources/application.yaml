@@ -1,0 +1,9 @@
+openexchangerates:
+  appId: 79d35d7560cc4bf5a1b89c89599b7fbe
+  url: https://openexchangerates.org/api
+  period: "2022-01-01"
+  comparingCurrency: USD
+giphy:
+  apiKey: zXJOd6zAD391F4HK20Kzyee9Qk8SpV9B
+  limit: 3 # limit of searching gifs
+  url: api.giphy.com/v1/gifs/search
