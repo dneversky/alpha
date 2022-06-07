@@ -4,4 +4,4 @@
 - выполните команду gradle bootRun
 ## Запуск с помощью Docker
 - скачайте образ командой docker pull dneversky/alpha:latest
-- запустите контейнер командой docker run --dp 8080:8080 --rm dneversky/alpha:latest
+- запустите контейнер командой docker run -dp 8080:8080 --rm dneversky/alpha:latest
