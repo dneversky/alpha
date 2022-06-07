@@ -7,3 +7,11 @@ giphy:
   apiKey: zXJOd6zAD391F4HK20Kzyee9Qk8SpV9B
   limit: 5 # limit of searching gifs
   url: api.giphy.com/v1/gifs/search
+
+logging:
+  level:
+    root: warn
+  file:
+    name: alpha.log
+server:
+  port: 8080
