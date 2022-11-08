@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Random;
 
-@Component
+@Service
 public class GifServiceImpl implements GifService {
 
     private final GifFeignClient gifFeignClient;
