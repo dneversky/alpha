@@ -12,7 +12,7 @@ import java.net.URI;
 import java.time.LocalDate;
 import java.util.Optional;
 
-@Component
+@Service
 public class ExchangeServiceImpl implements ExchangeService {
 
     @Value("${openexchangerates.appId}")
